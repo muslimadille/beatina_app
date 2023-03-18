@@ -21,6 +21,8 @@ import 'package:badges/badges.dart';
 import 'package:provider/provider.dart';
 import 'package:route_transitions/route_transitions.dart';
 
+import 'filter.dart';
+
 class Main extends StatefulWidget {
   Main({Key key, go_back = true}) : super(key: key);
 
@@ -91,9 +93,8 @@ class _MainState extends State<Main> {
   Widget build(BuildContext context){
     return WillPopScope(
       onWillPop: () async {
-        //print("_currentIndex");
+        print("_currentIndex");
         if (_currentIndex != 0) {
-          fetchAll();
           setState(() {
             _currentIndex = 0;
           });
@@ -105,87 +106,95 @@ class _MainState extends State<Main> {
       },
       child: Directionality(
         textDirection:
-            app_language_rtl.$ ? TextDirection.rtl : TextDirection.ltr,
+        app_language_rtl.$ ? TextDirection.rtl : TextDirection.ltr,
         child: Scaffold(
           extendBody: true,
           body: _children[_currentIndex],
-          bottomNavigationBar:
-          SizedBox(
-            height: 100,
+          floatingActionButtonLocation:
+          FloatingActionButtonLocation.centerDocked,
+          //specify the location of the FAB
+          floatingActionButton: Visibility(
+            visible: MediaQuery.of(context).viewInsets.bottom ==
+                0.0, // if the kyeboard is open then hide, else show
+            child: FloatingActionButton(
+              highlightElevation: 10.0,
+              backgroundColor: MyTheme.white,
+              onPressed: () {},
+              tooltip: "start FAB",
+              child: Container(
+                  margin: EdgeInsets.all(0.0),
+                  child: IconButton(
+                      icon: new Image.asset('assets/logo_trans.png'),
+                      tooltip: 'Action',
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                              return Filter(
+                                selected_filter: "sellers",
+                              );
+                            }));
+                      })),
+              elevation: 0.0,
+            ),
+          ),
+          bottomNavigationBar: BottomAppBar(
+            color: MyTheme.white,
+            clipBehavior: Clip.hardEdge,
+            shape: CircularNotchedRectangle(),
             child: BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
               onTap: onTapped,
-              currentIndex:_currentIndex,
-              backgroundColor: Colors.white.withOpacity(0.95),
-              unselectedItemColor: Color.fromRGBO(168, 175, 179, 1),
-              selectedItemColor: MyTheme.accent_color,
-              selectedLabelStyle: TextStyle(fontWeight:FontWeight.w700,color: MyTheme.accent_color,fontSize: 12 ),
-              unselectedLabelStyle: TextStyle(fontWeight:FontWeight.w400,color:Color.fromRGBO(168, 175, 179, 1),fontSize: 12 ),
-
+              currentIndex: _currentIndex,
+              backgroundColor: Colors.white.withOpacity(0.8),
+              fixedColor: MyTheme.accent_color,
+              unselectedItemColor: Color.fromRGBO(153, 153, 153, 1),
               items: [
                 BottomNavigationBarItem(
-                    icon: Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Image.asset(
-                        "assets/home.png",
-                        color: _currentIndex == 0
-                            ? Theme.of(context).accentColor
-                            : Color.fromRGBO(153, 153, 153, 1),
-                        height: 16,
-                      ),
+                    icon: Image.asset(
+                      "assets/home.png",
+                      color: _currentIndex == 0
+                          ? Theme.of(context).accentColor
+                          : Color.fromRGBO(153, 153, 153, 1),
+                      height: 20,
                     ),
-                    label:  AppLocalizations.of(context)
+                    label: AppLocalizations.of(context)
                         .main_screen_bottom_navigation_home),
                 BottomNavigationBarItem(
-                    icon: Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Image.asset(
-                        "assets/categories.png",
-                        color: _currentIndex == 1
-                            ? Theme.of(context).accentColor
-                            : Color.fromRGBO(153, 153, 153, 1),
-                        height: 16,
-                      ),
+                    icon: Image.asset(
+                      "assets/categories.png",
+                      color: _currentIndex == 1
+                          ? Theme.of(context).accentColor
+                          : Color.fromRGBO(153, 153, 153, 1),
+                      height: 20,
                     ),
                     label: AppLocalizations.of(context)
                         .main_screen_bottom_navigation_categories),
                 BottomNavigationBarItem(
-                    icon: Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child:
-                      Badge(
-
-                        toAnimate: false,
-                        shape: BadgeShape.circle,
-                        badgeColor: MyTheme.accent_color,
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.asset(
-                          "assets/cart.png",
-                          color: _currentIndex == 2
-                              ? Theme.of(context).accentColor
-                              : Color.fromRGBO(153, 153, 153, 1),
-                          height: 16,
-                        ),
-                        padding: EdgeInsets.all(5),
-                        badgeContent: Consumer<CartCounter>(
-                          builder: (context, cart, child) {
-                            return Text("${cart.cartCounter}",style: TextStyle(fontSize: 10,color: Colors.white),);
-                          },
-                        ),
-                      ),
-                    ),
-                    label: AppLocalizations.of(context)
-                        .main_screen_bottom_navigation_cart),
+                  icon: Icon(
+                    Icons.circle,
+                    color: Colors.transparent,
+                  ),
+                  label: "",
+                ),
                 BottomNavigationBarItem(
-                  icon: Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Image.asset(
-                      "assets/profile.png",
+                    icon: Image.asset(
+                      "assets/cart.png",
                       color: _currentIndex == 3
                           ? Theme.of(context).accentColor
                           : Color.fromRGBO(153, 153, 153, 1),
-                      height: 16,
+                      height: 20,
                     ),
+                    label: AppLocalizations.of(context)
+                        .main_screen_bottom_navigation_cart=='العربة'?'السلة':
+                    AppLocalizations.of(context)
+                        .main_screen_bottom_navigation_cart),
+                BottomNavigationBarItem(
+                  icon: Image.asset(
+                    "assets/profile.png",
+                    color: _currentIndex == 4
+                        ? Theme.of(context).accentColor
+                        : Color.fromRGBO(153, 153, 153, 1),
+                    height: 20,
                   ),
                   label: AppLocalizations.of(context)
                       .main_screen_bottom_navigation_profile,
