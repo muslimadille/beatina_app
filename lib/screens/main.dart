@@ -5,7 +5,6 @@ import 'package:active_ecommerce_flutter/custom/common_functions.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
 import 'package:active_ecommerce_flutter/presenter/bottom_appbar_index.dart';
 import 'package:active_ecommerce_flutter/presenter/cart_counter.dart';
-import 'package:active_ecommerce_flutter/repositories/cart_repository.dart';
 import 'package:active_ecommerce_flutter/screens/cart.dart';
 import 'package:active_ecommerce_flutter/screens/category_list.dart';
 import 'package:active_ecommerce_flutter/screens/home.dart';
@@ -17,7 +16,6 @@ import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:active_ecommerce_flutter/helpers/shared_value_helper.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:badges/badges.dart';
 import 'package:provider/provider.dart';
 import 'package:route_transitions/route_transitions.dart';
 
@@ -48,13 +46,13 @@ class _MainState extends State<Main> {
 
   void onTapped(int i) {
     fetchAll();
-    if (!is_logged_in.$ && ( i == 2)) {
+    if (!is_logged_in.$ && ( i == 3)) {
       
       Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
       return;
     }
 
-    if(i== 3){
+    if(i== 4){
       app_language_rtl.$ ?slideLeftWidget(newPage: Profile(), context: context):slideRightWidget(newPage: Profile(), context: context);
       return;
     }
@@ -76,8 +74,8 @@ class _MainState extends State<Main> {
       Home(counter: counter,),
       CategoryList(
         is_base_category: true,
-
       ),
+      Home(counter: counter,),
       Cart(has_bottomnav: true,from_navigation:true,counter: counter,),
       Profile()
     ];
@@ -127,12 +125,9 @@ class _MainState extends State<Main> {
                       icon: new Image.asset('assets/logo_trans.png'),
                       tooltip: 'Action',
                       onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                              return Filter(
-                                selected_filter: "sellers",
-                              );
-                            }));
+                        setState((){
+                          _currentIndex=0;
+                        });
                       })),
               elevation: 0.0,
             ),

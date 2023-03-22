@@ -19,6 +19,8 @@ import 'package:active_ecommerce_flutter/data_model/nagad_payment_process_respon
 
 import 'package:active_ecommerce_flutter/data_model/sslcommerz_begin_response.dart';
 
+import '../data_model/moyasar_response_model.dart';
+
 class PaymentRepository {
   Future<dynamic> getPaymentResponseList(
       {mode = "", list = "both"}) async {
@@ -141,6 +143,7 @@ class PaymentRepository {
     return orderCreateResponseFromJson(response.body);
   }
 
+
   Future<dynamic> getOrderCreateResponseFromManualPayment(
       @required payment_method) async {
     var post_body = jsonEncode(
@@ -164,6 +167,15 @@ class PaymentRepository {
     return orderCreateResponseFromJson(response.body);
   }
 
+  Future<MiyasarUrlResponse> getMoyasarUrlResponse(int orderId) async {
+    Uri url = Uri.parse("${AppConfig.BASE_URL}/mobile/payment/$orderId");
+
+    final response = await http.get(url, headers: {
+      "App-Language": app_language.$,
+    });
+
+    return MiyasarUrlResponseFromJson(response.body);
+  }
   Future<RazorpayPaymentSuccessResponse> getRazorpayPaymentSuccessResponse(
       @required payment_type,
       @required double amount,

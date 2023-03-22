@@ -587,7 +587,7 @@ class _LoginState extends State<Login> {
                         ),
 
                         //if(allow_twitter_login.$)
-                        Padding(
+                        /*Padding(
                           padding: const EdgeInsets.only(left: 15.0),
                           child: InkWell(
                             onTap: () {
@@ -598,7 +598,7 @@ class _LoginState extends State<Login> {
                               child: Image.asset("assets/twitter_logo.png"),
                             ),
                           ),
-                        ),
+                        ),*/
                         if(Platform.isIOS)
                         Padding(
                           padding: const EdgeInsets.only(left: 15.0),

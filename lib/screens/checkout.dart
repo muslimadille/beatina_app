@@ -1,5 +1,7 @@
 import 'package:active_ecommerce_flutter/custom/box_decorations.dart';
 import 'package:active_ecommerce_flutter/custom/enum_classes.dart';
+import 'package:active_ecommerce_flutter/data_model/moyasar_response_model.dart';
+import 'package:active_ecommerce_flutter/ui_elements/web_viewer_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:active_ecommerce_flutter/my_theme.dart';
@@ -350,6 +352,7 @@ class _CheckoutState extends State<Checkout> {
     } else if (_selected_payment_method == "manual_payment" &&
         widget.paymentFor == PaymentFor.Order) {
       pay_by_manual_payment();
+
     } else if (_selected_payment_method == "manual_payment" &&
         widget.paymentFor == PaymentFor.ManualPayment) {
       Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -399,18 +402,20 @@ class _CheckoutState extends State<Checkout> {
 
   pay_by_manual_payment() async {
     loading();
-    var orderCreateResponse = await PaymentRepository()
-        .getOrderCreateResponseFromManualPayment(_selected_payment_method_key);
-Navigator.pop(loadingcontext);
-    if (orderCreateResponse.result == false) {
-      ToastComponent.showDialog(orderCreateResponse.message, gravity: Toast.center, duration: Toast.lengthLong);
-      Navigator.of(context).pop();
-      return;
-    }
+     await PaymentRepository()
+        .getMoyasarUrlResponse(widget.order_id).then((value){
+          if ((value.url??"").isEmpty) {
+            ToastComponent.showDialog("خطأ حاول مرة أخرى", gravity: Toast.center, duration: Toast.lengthLong);
+            Navigator.of(context).pop();
+            return;
+          }
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return WebPage(value.url);
+          }));
+    });
 
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return OrderList(from_checkout: true);
-    }));
+
+
   }
 
   onPaymentMethodItemTap(index) {
